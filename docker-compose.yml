@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Web Application Service (Laravel + Nginx)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: modul-digital-app
+    container_name: modul_digital_web
+    restart: unless-stopped
+    ports:
+      - "8011:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+
+  # Database Service (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: modul_digital_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-modul_digital}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "33061:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
+    driver: local
